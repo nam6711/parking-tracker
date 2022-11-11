@@ -1,0 +1,2 @@
+C:\Users\manou\source\repos\nam6711\parking-tracker\PathFinder\obj\Debug\PathFinder.csproj.AssemblyReference.cache
+C:\Users\manou\source\repos\nam6711\parking-tracker\PathFinder\obj\Debug\PathFinder.csproj.CoreCompileInputs.cache
