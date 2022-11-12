@@ -56,10 +56,10 @@ namespace PathFinder
 
         // this method is used to set up the weights between all nodes connected
         //   to this node instance
-        public void FindWeights(SortedList<int, Node> nodes)
+        public void FindWeights(SortedList<int, Node> nodes, ref SortedList<int, SortedList<int, double>> graph)
         {
             // iterate through all the contents of the connections list
-            foreach ( int i in this.connectionsArray)
+            foreach (int i in this.connectionsArray)
             {
                 // hold node at given index
                 Node node = nodes[i];
@@ -72,8 +72,10 @@ namespace PathFinder
                 // store that distance in the weights list with the id of the node
                 //   as the key in nodeWeights
                 nodeWeights.Add(i, weight);
+
                 this.connections.Add(i, node);
             }
+            graph.Add(this.Index, this.NodeWeights);
         }
 
         public Node(int index, double x, double y, string name, int[] connections)
@@ -155,14 +157,15 @@ namespace PathFinder
         //                                  where int is the step in our path, and Node
         //                                  is the next Node to step into
         // Restrictions: none? i think?
-        public SortedList<int, Node> FindPath(int start, int end)
+        public List<int> FindPath(int start, int end)
         {
             // Sorted List that maps the distance each node is from the current point
             SortedList<int, double> distances = new SortedList<int, double>();
             // SortedList holding whether or not we have already been to a node
             SortedList<int, bool> visited = new SortedList<int, bool>();
             // SortedList holding our shortest path
-            SortedList<int, Node> shortestPath = new SortedList<int, Node>();
+            //SortedList<int, Node> shortestPaths = new SortedList<int, Node>();
+            List<int> parent = new List<int>();
 
             // loop through both lists and initialize SortedList to start values
             foreach (KeyValuePair<int, Node> kvp in nodes )
@@ -175,6 +178,8 @@ namespace PathFinder
 
             // set the initial point we start at to having a distance of 0 from us
             distances[start] = 0;
+            // set a variable to hold which node we are on in the loop
+            int currentNode = start;
 
             // iterate a number of times equal to the size of the nodes list
             //  and every loop, find the next closest node to where we left off
@@ -183,24 +188,10 @@ namespace PathFinder
             //      treaded
             // once we hit the end index, break out
             // used to keep track of which index on our path we're on
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                // find the point closest to this current node
-                // **on the first loop, the value of u starts as the start index
-                //   as it has a weight of 0, as set above!
-                // also add the current closest node to the path list
-                int closestNode = SetShortestDistance(distances, visited);
-                shortestPath.Add(i, nodes[closestNode]);
-
-                // if the current node we are on is the end index, then
-                // break out!
-                if (closestNode == end)
-                {
-                    break;
-                }
+            while (currentNode != -1 && !visited[currentNode]) { 
 
                 // set the node we just found to having been visited
-                visited[closestNode] = true;    
+                visited[currentNode] = true;
 
                 // update the nearby spaces and add how far away they are from
                 // the current index we are checking ( we check to find nearby spaces by if they're connected to the shortest node)
@@ -214,23 +205,26 @@ namespace PathFinder
                     //   and if the weight from the current node to itself is smaller than infinity 
                     //   (meaning it still has its initial weight) then set its weight so we can check 
                     //   to see how far it is for next loop
-                    Console.WriteLine($"{closestNode}, {node.Key}, {graph[closestNode].ContainsKey(node.Key)}");
                     if (!visited[node.Key] && // checks if a space was visited
-                        graph[closestNode].Values.Contains(node.Key) && // checks if the closestNode is connected to the current node
-                        distances[closestNode] + graph[closestNode][node.Key] < distances[node.Key]) // checks if the current value of the node in the distances array
-                        //                                                                           // is greater than the graph's weight on the closest node
+                        graph[currentNode].ContainsKey(node.Key) && // checks if the closestNode is connected to the current node
+                        distances[currentNode] + graph[currentNode][node.Key] < distances[node.Key]) // checks if the current value of the node in the distances array
+                                                                                                     // is greater than the graph's weight on the closest node
                     {
                         // if this node has not been visited, and we haven't even looked at it yet, then assign
                         // it a distance from the current node so we can potentially visit it next loop
-                        distances[node.Key] = distances[closestNode] + graph[closestNode][node.Key];
+                        distances[node.Key] = distances[currentNode] + graph[currentNode][node.Key];
+                        parent.Add(currentNode);
                     }
                 }
+
+                // find the point closest to this current node
+                // **on the first loop, the value of u starts as the start index
+                //   as it has a weight of 0, as set above!
+                // also add the current closest node to the path list
+                currentNode = SetShortestDistance(distances, visited);
+                Console.WriteLine($"Closest: {currentNode}");
             }
-            foreach (KeyValuePair<int, double> kvp in distances)
-            {
-                Console.WriteLine($"{kvp.Key}       {kvp.Value}");
-            }
-            return shortestPath;
+            return parent;
         }
 
         // Method: LoadJson
@@ -254,8 +248,6 @@ namespace PathFinder
             {
                 // add each node to the list of nodes
                 nodes.Add(node.Index, node);
-                // add the node's SortedList of weights to the weights list
-                graph.Add(node.Index, node.NodeWeights);
             }
         }
 
@@ -268,14 +260,13 @@ namespace PathFinder
         //               to any pathfinding
         public PathCreate(string directory)
         {
-            Console.WriteLine("dir {0}", directory);
             this.LoadJson(directory);
             // one last step to initialize all nodes by having them
             //   calculate their weights
             // also initializes the graph for us
             foreach (KeyValuePair<int, Node> kvp in nodes)
             {
-                kvp.Value.FindWeights(nodes);
+                kvp.Value.FindWeights(nodes, ref graph);
             }
         }
     }
