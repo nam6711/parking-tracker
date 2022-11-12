@@ -157,7 +157,7 @@ namespace PathFinder
         //                                  where int is the step in our path, and Node
         //                                  is the next Node to step into
         // Restrictions: none? i think?
-        public List<int> FindPath(int start, int end)
+        public Node[] FindPath(int start, int end)
         {
             // Sorted List that maps the distance each node is from the current point
             SortedList<int, double> distances = new SortedList<int, double>();
@@ -165,15 +165,17 @@ namespace PathFinder
             SortedList<int, bool> visited = new SortedList<int, bool>();
             // SortedList holding our shortest path
             //SortedList<int, Node> shortestPaths = new SortedList<int, Node>();
-            List<int> parent = new List<int>();
-
+            SortedList<int, int> parents = new SortedList<int, int>();
+            
             // loop through both lists and initialize SortedList to start values
-            foreach (KeyValuePair<int, Node> kvp in nodes )
+            foreach (KeyValuePair<int, SortedList<int, double>> kvp in graph )
             {
                 // all distances are max value since we dont know what they are rn
                 distances.Add(kvp.Key, double.MaxValue);
                 // set all spaces to not being visited
                 visited.Add(kvp.Key, false);
+                // set all nodes to track their lists
+                parents.Add(kvp.Key, -1);
             }
 
             // set the initial point we start at to having a distance of 0 from us
@@ -188,7 +190,7 @@ namespace PathFinder
             //      treaded
             // once we hit the end index, break out
             // used to keep track of which index on our path we're on
-            while (currentNode != -1 && !visited[currentNode]) { 
+            while (currentNode != -1) { 
 
                 // set the node we just found to having been visited
                 visited[currentNode] = true;
@@ -198,7 +200,7 @@ namespace PathFinder
                 // what will happen, is next loop there will be even more indeces to
                 // check the distance of, and we loop over until we eventually hit the
                 // end index
-                foreach (KeyValuePair<int, Node> node in nodes)
+                foreach (KeyValuePair<int, double> node in graph[currentNode])
                 {
                     // if the current index is able to be accessed by the node we are checking
                     // and hasn't already been visited:
@@ -213,7 +215,7 @@ namespace PathFinder
                         // if this node has not been visited, and we haven't even looked at it yet, then assign
                         // it a distance from the current node so we can potentially visit it next loop
                         distances[node.Key] = distances[currentNode] + graph[currentNode][node.Key];
-                        parent.Add(currentNode);
+                        parents[node.Key] = currentNode;
                     }
                 }
 
@@ -222,9 +224,44 @@ namespace PathFinder
                 //   as it has a weight of 0, as set above!
                 // also add the current closest node to the path list
                 currentNode = SetShortestDistance(distances, visited);
-                Console.WriteLine($"Closest: {currentNode}");
             }
-            return parent;
+
+            // recursively runs through the nodes that were closest to eachother and 
+            //   adds them to a sorted list that is returned to what called the program
+            Node[] shortestPath = new Node[nodes.Count];
+            // add the end node to the path to start with
+            shortestPath[0] = nodes[end];
+
+            // what we have compiled is a list of pointers, where -1 means that a node is the initial point
+            //  ex: node 1 points to node -1
+            //      node 2 points to node 1
+            //      node 3 points to node 2
+            //      node 4 points to node 3
+            // what we do, is we start at the end node, and follow where it points until
+            //   we reach our starting node, this is because dijkstra's compiles our list in
+            //   reverse. so we just reverse our list when we are done
+            // this holds the next node we should go to when starting at the end node
+            int nextNode = parents[end];
+
+            // while the current node != -1 (meaning it isn't the start node)
+            //   run through all paths and compile a list
+            int i = 1;
+            while (nextNode != -1)
+            {
+                // add this on to the end of the list
+                shortestPath[i] = nodes[nextNode];
+                // search for what the next pointer is based off of what we're on now
+                nextNode = parents[nextNode];
+                i++;
+            }
+            // return the final path reversed so that it is usable
+            Node[] reversedRoute = new Node[i];
+            for (i = 0; i < reversedRoute.Length; i++)
+            {
+                reversedRoute[i] = shortestPath[reversedRoute.Length - (1 + i)];
+            }
+
+            return reversedRoute;
         }
 
         // Method: LoadJson

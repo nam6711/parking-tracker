@@ -37,13 +37,14 @@ namespace PathFinderLibraryTestProgram
             PathCreate pc = new PathCreate("nodeList.json");
             // run the path finding method and store the output into a sorted list
             // for the given nodes, i've decided to path between nodes 1 to 4
-            List<int> path = pc.FindPath(1, 4);
+            Node[] path = pc.FindPath(1, 5);
+            Console.Write(path.Length);    
             // iterate through the path, node by node. each node has a name, id, x, y value you can connect
             Console.WriteLine("******************************");
             Console.WriteLine("Step             Node");
-            foreach (int index in path)
+            for (int i = 0; i < path.Length ; i++)
             {
-                Console.WriteLine($"{index}");
+                Console.WriteLine($"{path[i].Index}");
             }
             Console.WriteLine("******************************");
         }
