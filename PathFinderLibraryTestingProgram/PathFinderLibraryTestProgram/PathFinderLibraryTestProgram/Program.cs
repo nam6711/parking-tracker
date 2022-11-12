@@ -24,15 +24,6 @@ namespace PathFinderLibraryTestProgram
         //               and seeing how data is returned
         static void Main(string[] args)
         {
-            // test to make sure the JSON file is correctly being loaded from the bin/debug folder
-            //using (StreamReader sr = new StreamReader("nodeList.json"))
-            //{
-            //    // Note from Nat: It works!
-            //    string json = sr.ReadToEnd();
-            //    Console.WriteLine(json); 
-            //    sr.Close();
-            //}
-
             // create a new PathFinder instince and run a path finding method
             PathCreate pc = new PathCreate("nodeList.json");
             // run the path finding method and store the output into a sorted list
