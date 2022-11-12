@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+// JSON file reader
+using Newtonsoft.Json;
 
 namespace PathFinder
 {
@@ -32,8 +32,8 @@ namespace PathFinder
         private string name;
         public string Name { get { return this.name; } }
         // id used to find the Node in a SortedList
-        private int id;
-        public int ID { get { return this.id; } }
+        private int index;
+        public int Index { get { return this.index; } }
 
         // holds the x position of the node. has a getter method
         private double x;
@@ -44,8 +44,10 @@ namespace PathFinder
 
         // holds a list of all nodes that this instance can connect to
         //   has a getter method
-        private SortedList<int, Node> nodeConnections = new SortedList<int, Node>();
-        public SortedList<int, Node> NodeConnections { get { return this.nodeConnections; } }
+        private SortedList<int, Node> connections = new SortedList<int, Node>();
+        public SortedList<int, Node> Connections { get { return this.connections; } }
+        // temporarily holds connections list as an array for when its loaded in by JSON
+        private int[] connectionsArray;
 
         // holds the weight (distance) between each node using the same ID system
         //   has a getter method
@@ -54,38 +56,34 @@ namespace PathFinder
 
         // this method is used to set up the weights between all nodes connected
         //   to this node instance
-        private SortedList<int, double> FindWeights()
+        public void FindWeights(SortedList<int, Node> nodes)
         {
-            // create a new SortedList to hold the weights generated
-            SortedList<int, double> weights = new SortedList<int, double>();
-
             // iterate through all the contents of the connections list
-            foreach ( KeyValuePair<int, Node> kvp in this.nodeConnections )
+            foreach ( int i in this.connectionsArray)
             {
+                // hold node at given index
+                Node node = nodes[i];
+
                 // find the distance between this Node instance, and the selected
                 //   value in the loop
                 double weight = Math.Sqrt(
-                    Math.Pow((this.x - kvp.Value.x), 2) + Math.Pow((this.y - kvp.Value.y), 2));
+                    Math.Pow((this.x - node.x), 2) + Math.Pow((this.y - node.y), 2));
 
                 // store that distance in the weights list with the id of the node
                 //   as the key in nodeWeights
-                weights.Add(kvp.Key, weight);
+                nodeWeights.Add(i, weight);
+                this.connections.Add(i, node);
             }
-
-            // return newly generated nodeWeight list
-            return weights;
         }
 
-        public Node(int id, double x, double y, SortedList<int, Node> connections, string name = "")
+        public Node(int index, double x, double y, string name, int[] connections)
         {
-            this.name = name;
-            this.id = id;
+            this.index = index;
             this.x = x;
             this.y = y;
-            this.nodeConnections = connections;
-
-            // set up nodeWeights after initialization
-            this.FindWeights();
+            this.name = name;
+            // TODO: fix the fact that we need to load all connections as a Array to start, then we can turn them into sorted lists cus FUCK
+            this.connectionsArray = connections;
         }
     }
 
@@ -97,7 +95,7 @@ namespace PathFinder
     // Construction: string directory - the directory of a JSON file to load Nodes from
     // Restrictions: The only data someone can grab from this is the FindPath method
     //               as NOTHING should be altered after initialization of JSON file
-    public class PathFinder
+    public class PathCreate
     {
         // used to hold all Nodes loaded from a JSON file
         // public so that the x and y positions from JSON can be accessed outside the program
@@ -126,7 +124,7 @@ namespace PathFinder
             double shortestDist = double.MaxValue;
 
             // iterate through all nearby nodes and check the space between them
-            foreach (KeyValuePair<int, double> kvp in distances)
+            foreach (KeyValuePair<int, Node> kvp in nodes)
             {
                 // assign the value of the current node we are checking
                 int node = kvp.Key;
@@ -202,7 +200,7 @@ namespace PathFinder
                 }
 
                 // set the node we just found to having been visited
-                visited.Add(closestNode, true);    
+                visited[closestNode] = true;    
 
                 // update the nearby spaces and add how far away they are from
                 // the current index we are checking ( we check to find nearby spaces by if they're connected to the shortest node)
@@ -216,6 +214,7 @@ namespace PathFinder
                     //   and if the weight from the current node to itself is smaller than infinity 
                     //   (meaning it still has its initial weight) then set its weight so we can check 
                     //   to see how far it is for next loop
+                    Console.WriteLine($"{closestNode}, {node.Key}, {graph[closestNode].ContainsKey(node.Key)}");
                     if (!visited[node.Key] && // checks if a space was visited
                         graph[closestNode].Values.Contains(node.Key) && // checks if the closestNode is connected to the current node
                         distances[closestNode] + graph[closestNode][node.Key] < distances[node.Key]) // checks if the current value of the node in the distances array
@@ -227,7 +226,10 @@ namespace PathFinder
                     }
                 }
             }
-
+            foreach (KeyValuePair<int, double> kvp in distances)
+            {
+                Console.WriteLine($"{kvp.Key}       {kvp.Value}");
+            }
             return shortestPath;
         }
 
@@ -242,20 +244,18 @@ namespace PathFinder
         {
             // will hold all loaded Nodes from JSON so we can
             // access them for sorting into usable lists!
-            List<Node> items;
+            StreamReader sr = new StreamReader(dir);
+            string json = sr.ReadToEnd();
+            List<Node> items = JsonConvert.DeserializeObject<List<Node>>(json);
+            sr.Close();
 
-            using (StreamReader sr = new StreamReader(dir))
-            {
-                string json = sr.ReadToEnd();
-                items = JsonSerializer.Deserialize<List<Node>>(json);
-            }
-
+            // loads all nodes into needed lists
             foreach (Node node in items)
             {
                 // add each node to the list of nodes
-                nodes.Add(node.ID, node);
+                nodes.Add(node.Index, node);
                 // add the node's SortedList of weights to the weights list
-                graph.Add(node.ID, node.NodeWeights);
+                graph.Add(node.Index, node.NodeWeights);
             }
         }
 
@@ -266,9 +266,17 @@ namespace PathFinder
         // Parameters: string directory - the directory of a JSON file to load Nodes from
         // Restrictions: Runs first so that all dependent data is loaded prior
         //               to any pathfinding
-        public PathFinder(string directory)
+        public PathCreate(string directory)
         {
-
+            Console.WriteLine("dir {0}", directory);
+            this.LoadJson(directory);
+            // one last step to initialize all nodes by having them
+            //   calculate their weights
+            // also initializes the graph for us
+            foreach (KeyValuePair<int, Node> kvp in nodes)
+            {
+                kvp.Value.FindWeights(nodes);
+            }
         }
     }
 }
