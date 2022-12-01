@@ -11,7 +11,6 @@ C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debu
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Numerics.Vectors.dll
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Text.Encodings.Web.dll
-C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Text.Json.dll
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Threading.Tasks.Extensions.dll
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.ValueTuple.dll
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
@@ -20,9 +19,10 @@ C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debu
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Numerics.Vectors.xml
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Text.Encodings.Web.xml
-C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Text.Json.xml
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.Threading.Tasks.Extensions.xml
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\System.ValueTuple.xml
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\obj\Debug\PathFinder.csproj.CopyComplete
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\obj\Debug\PathFinder.dll
 C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\obj\Debug\PathFinder.pdb
+C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\Newtonsoft.Json.dll
+C:\Users\manou\source\repos\nam6711\igme-201\parking-tracker\PathFinder\bin\Debug\Newtonsoft.Json.xml
