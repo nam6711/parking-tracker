@@ -101,7 +101,7 @@ namespace PathFinder
     {
         // used to hold all Nodes loaded from a JSON file
         // public so that the x and y positions from JSON can be accessed outside the program
-        private SortedList<int, Node> nodes = new SortedList<int, Node>();
+        public SortedList<int, Node> nodes = new SortedList<int, Node>();
         // list that holds the weights of every node
         // Key - the id of a Node
         // Value - the weight of each connection the Node has
