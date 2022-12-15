@@ -16,7 +16,8 @@ namespace WindowsFormsApp1
     {
         //globals
         List<Node> allNodes = new List<Node>();
-        PathFinder.PathFinder pathFinder = new PathFinder.PathFinder("nodeList (1)");
+        static PathFinder.PathFinder pathFinder = new PathFinder.PathFinder("nodeList (1)");
+        static SortedList<int, Node> path = new SortedList<int, Node>();
         bool firstClick = false;
         Node node1 = null;
         Node node2 = null;
@@ -24,7 +25,9 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             //allNodes = new List<Node>(pathFinder.nodes.Values);
-            allNodes = pathFinder.nodes.Values.ToList<Node>();
+            path = pathFinder.FindPath(1, 10);
+
+
             this.pictureBox1.Click += PictureBox1__Click;
         }
 
