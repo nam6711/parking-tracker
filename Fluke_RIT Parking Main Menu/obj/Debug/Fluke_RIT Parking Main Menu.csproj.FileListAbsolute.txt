@@ -21,3 +21,4 @@ F:\Semesters\Semester 3\IGME 201\Group Project\Fluke_RIT Parking Main Menu\obj\D
 F:\Semesters\Semester 3\IGME 201\Group Project\Fluke_RIT Parking Main Menu\obj\Debug\Fluke_RIT Parking Main Menu.exe
 F:\Semesters\Semester 3\IGME 201\Group Project\Fluke_RIT Parking Main Menu\obj\Debug\Fluke_RIT Parking Main Menu.pdb
 F:\Semesters\Semester 3\IGME 201\Group Project\Fluke_RIT Parking Main Menu\obj\Debug\Fluke_RIT_Parking_Main_Menu.lotViewForm.resources
+F:\Semesters\Semester 3\IGME 201\Group Project\Fluke_RIT Parking Main Menu\obj\Debug\Fluke_RIT_Parking_Main_Menu.optimalLotForm.resources

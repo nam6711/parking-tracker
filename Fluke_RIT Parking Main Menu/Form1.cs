@@ -16,6 +16,12 @@ namespace Fluke_RIT_Parking_Main_Menu
         {
             InitializeComponent();
 
+            this.mainMenuButton.Enabled = true;
+            this.displayLotsbutton.Enabled = true;
+            this.optimalLotButton.Enabled = true;
+            this.ritDiningButton.Enabled = true;
+            this.exitButton.Enabled = true;
+
             this.mainMenuButton.Click += new EventHandler(MainMenuButton__Click);
             this.displayLotsbutton.Click += new EventHandler(DisplayLotsButton__Click);
             this.optimalLotButton.Click += new EventHandler(OptimalLotButton__Click);
@@ -36,7 +42,8 @@ namespace Fluke_RIT_Parking_Main_Menu
         }
         private void OptimalLotButton__Click(object sender, EventArgs e)
         {
-
+            var myForm = new optimalLotForm();
+            myForm.Show();
         }
         private void RITDiningButton__Click(object sender, EventArgs e)
         {
